@@ -1,13 +1,14 @@
 /*
-*
-* mads - version 2.00.01
-* Copyright (c) 2015, Ninjoe
-* Dual licensed under the MIT or GPL Version 2 licenses.
-* https://en.wikipedia.org/wiki/MIT_License
-* https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
-*
-*/
-var mads = function () {
+ *
+ * mads - version 2.00.01
+ * Copyright (c) 2015, Ninjoe
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * https://en.wikipedia.org/wiki/MIT_License
+ * https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
+ *
+ */
+
+var mads = function() {
     /* Get Tracker */
     if (typeof custTracker == 'undefined' && typeof rma != 'undefined') {
         this.custTracker = rma.customize.custTracker;
@@ -77,12 +78,12 @@ var mads = function () {
 };
 
 /* Generate unique ID */
-mads.prototype.uniqId = function () {
+mads.prototype.uniqId = function() {
 
     return new Date().getTime();
 }
 
-mads.prototype.tagsProcess = function (tags) {
+mads.prototype.tagsProcess = function(tags) {
 
     var tagsStr = '';
 
@@ -96,7 +97,7 @@ mads.prototype.tagsProcess = function (tags) {
 }
 
 /* Link Opner */
-mads.prototype.linkOpener = function (url) {
+mads.prototype.linkOpener = function(url) {
 
     if (typeof url != "undefined" && url != "") {
 
@@ -109,12 +110,12 @@ mads.prototype.linkOpener = function (url) {
 }
 
 /* tracker */
-mads.prototype.tracker = function (tt, type, name, value) {
+mads.prototype.tracker = function(tt, type, name, value) {
 
     /*
-    * name is used to make sure that particular tracker is tracked for only once
-    * there might have the same type in different location, so it will need the name to differentiate them
-    */
+     * name is used to make sure that particular tracker is tracked for only once
+     * there might have the same type in different location, so it will need the name to differentiate them
+     */
     name = name || type;
 
     if (typeof this.custTracker != 'undefined' && this.custTracker != '' && this.tracked.indexOf(name) == -1) {
@@ -155,9 +156,18 @@ mads.prototype.tracker = function (tt, type, name, value) {
 };
 
 /* Load JS File */
-mads.prototype.loadJs = function (js, callback) {
+mads.prototype.loadJs = function(js, callback, id) {
+    if (id && document.getElementById(id)) {
+        callback();
+        return;
+    }
+
     var script = document.createElement('script');
     script.src = js;
+    if (id) {
+        script.id = id;
+    }
+
 
     if (typeof callback != 'undefined') {
         script.onload = callback;
@@ -167,7 +177,7 @@ mads.prototype.loadJs = function (js, callback) {
 }
 
 /* Load CSS File */
-mads.prototype.loadCss = function (href) {
+mads.prototype.loadCss = function(href) {
     var link = document.createElement('link');
     link.href = href;
     link.setAttribute('type', 'text/css');
@@ -177,10 +187,226 @@ mads.prototype.loadCss = function (href) {
 }
 
 
-var ad = (function () {
-    var _m = new mads();
-    _m.contentTag.innerHTML = '<div id="adc"></div>';
+var ad = function(_m) {
+    // var _m = new mads();
 
-    var adContainer = _m.contentTag.querySelector('#adc');
-    
-})()
+    var selfie;
+
+    var sliderHead = '<div id="chooser"><div class="slider js_slider"> <div class="frame js_frame"> <ul class="slides js_slides"> <li class="js_slide selected"><img class="image1" src="' + _m.path + 'img/1-d.png"></li><li class="js_slide"><img class="image2" src="' + _m.path + 'img/2-d.png"></li><li class="js_slide"><img class="image3" src="' + _m.path + 'img/3-d.png"></li><li class="js_slide"><img class="image4" src="' + _m.path + 'img/4-d.png"></li><li class="js_slide"><img class="image5" src="' + _m.path + 'img/5-d.png"></li><li class="js_slide"><img class="image6" src="' + _m.path + 'img/6-d.png"></li></ul> </div><img class="js_prev prev" src="' + _m.path + 'img/slider_btn.png"> <img class="js_next next" src="' + _m.path + 'img/slider_btn.png"> </div></div><div id="buttons"><div id="kembali">Kembali</div><div id="pilih">Pilih</div></div>';
+
+    _m.contentTag.innerHTML = '<div id="adc"><div id="first"><label id="btnSelfie" for="file-input">Selfie<input type="file" accept="image/*;capture=camera" id="file-input"></label></div><div id="second"><img id="instruction" src="' + _m.path + 'img/gif.gif"><div class="mask"></div><div id="controls"><img class="rotate" src="' + _m.path + 'img/rotate.png"><img class="zoomin" src="' + _m.path + 'img/zoom_plus.png"><img class="zoomout" src="' + _m.path + 'img/zoom_minus.png"></div><div id="containerwork"><div id="workspace"></div></div>' + sliderHead + '</div><div id="last"><img src="' + _m.path + 'img/last.png"></div></div><div id="overlay"></div>';
+
+
+    var firstPage = _m.contentTag.querySelector('#first');
+    firstPage.style.background = "url(" + _m.path + "img/first.png)";
+
+    var secondPage = _m.contentTag.querySelector('#second');
+    secondPage.style.background = "url(" + _m.path + "img/second.png)";
+
+    var lastPage = _m.contentTag.querySelector('#last');
+
+    var inputFile = _m.contentTag.querySelector('input');
+
+    inputFile.addEventListener('change', function(e) {
+        var files = inputFile.files;
+        var len = files.length;
+
+        if (FileReader && files && len) {
+            var fr = new FileReader();
+            fr.onload = function() {
+                var dimg = selfie = new Image();
+                dimg.id = 'selfie'
+                dimg.onload = function() {}
+                dimg.src = fr.result;
+                workspace.appendChild(dimg);
+                addControlTo(dimg);
+            }
+            fr.readAsDataURL(files[0])
+
+            GotoPage(2)
+        }
+    });
+
+    var mask = _m.contentTag.querySelector('.mask');
+    var inst = _m.contentTag.querySelector('#instruction');
+
+    var kembali = _m.contentTag.querySelector('#kembali');
+    var pilih = _m.contentTag.querySelector('#pilih');
+    kembali.addEventListener('click', function() {
+        GotoPage(1);
+    });
+    var lastimg;
+    pilih.addEventListener('click', function() {
+        activ.src = activ.src.replace('-d', '-e');
+
+        html2canvas(workspace, {
+            onrendered: function(canvas) {
+                lastimg = canvas.toDataURL("image/png");
+                GotoPage(3);
+            }
+        })
+    })
+
+    var rotate = _m.contentTag.querySelector('#controls .rotate');
+    var zoomin = _m.contentTag.querySelector('#controls .zoomin');
+    var zoomout = _m.contentTag.querySelector('#controls .zoomout');
+
+    rotate.addEventListener('click', function() {
+        Velocity(selfie, {
+            rotateZ: '+=45deg'
+        })
+    })
+    zoomin.addEventListener('click', function() {
+        Velocity(selfie, {
+            scale: '+=0.1'
+        })
+    })
+    zoomout.addEventListener('click', function() {
+        Velocity(selfie, {
+            scale: '-=0.1'
+        })
+    })
+
+
+    var images = _m.contentTag.querySelectorAll(".js_slide")
+    var activ;
+    for (i = 0; i < images.length; i++) {
+        (function(i) {
+            images[i].addEventListener('click', function() {
+                _m.contentTag.querySelector('.js_slide.selected').className = 'js_slide';
+                images[i].className += ' selected';
+                activ.src = _m.contentTag.querySelector('#chooser .selected img').src;
+            });
+        })(i);
+    }
+
+    var workspace = _m.contentTag.querySelector('#workspace');
+
+    var addControlTo = function(dimg) {
+        var manager = new Hammer.Manager(dimg);
+
+        var Pan = new Hammer.Pan();
+        var Rotate = new Hammer.Rotate();
+        var Pinch = new Hammer.Pinch();
+
+        Rotate.recognizeWith([Pan]);
+        Pinch.recognizeWith([Rotate, Pan]);
+
+        manager.add(Pan);
+        manager.add(Rotate);
+        manager.add(Pinch);
+
+        // Rotating
+        var liveScale = 1;
+        var currentRotation = 0;
+        manager.on('rotatemove', function(e) {
+            var rotation = currentRotation + Math.round(liveScale * e.rotation);
+            Velocity.hook(dimg, 'rotateZ', rotation + 'deg');
+        });
+        manager.on('rotateend', function(e) {
+            currentRotation += Math.round(e.rotation);
+        });
+
+        // Panning
+        var deltaX = 0;
+        var deltaY = 0;
+        manager.on('panmove', function(e) {
+            var dx = deltaX + (e.deltaX);
+            var dy = deltaY + (e.deltaY);
+
+            Velocity.hook(dimg, 'translateX', dx + 'px');
+            Velocity.hook(dimg, 'translateY', dy + 'px');
+        });
+        manager.on('panend', function(e) {
+            deltaX = deltaX + e.deltaX;
+            deltaY = deltaY + e.deltaY;
+        })
+
+        // Scaling
+        var currentScale = 1;
+
+        function getRelativeScale(scale) {
+            return scale * currentScale;
+        }
+        manager.on('pinchmove', function(e) {
+            var scale = getRelativeScale(e.scale);
+            Velocity.hook(dimg, 'scale', scale);
+        });
+        manager.on('pinchend', function(e) {
+            currentScale = getRelativeScale(e.scale);
+            liveScale = currentScale;
+        });
+    }
+
+    // Goto
+    var GotoPage = function(page, d) {
+        switch (page) {
+            case 1:
+                firstPage.style.display = 'block';
+                secondPage.style.display = 'none';
+                mask.style.display = 'block';
+                inst.style.display = 'block';
+                break;
+            case 2:
+                firstPage.style.display = 'none';
+                secondPage.style.display = 'block';
+                workspace.innerHTML = '';
+                activ = _m.contentTag.querySelector('#chooser .selected img').cloneNode(true);
+                activ.className = 'coverlay';
+                workspace.appendChild(activ);
+                if (d) {
+                    var dimg = selfie = new Image();
+                    dimg.id = 'selfie'
+                    dimg.onload = function() {}
+                    dimg.src = _m.path + 'img/first.png';
+                    workspace.appendChild(dimg);
+                    addControlTo(dimg);
+                }
+                _m.loadJs(_m.path + 'js/lory.min.js', function() {
+                    setTimeout(function() {
+                        var slider = _m.contentTag.querySelector('.js_slider');
+                        lory(slider, {
+                            slidesToScroll: 3
+                        })
+                    }, 500)
+                }, 'lory')
+                var close = function() {
+                    mask.style.display = 'none';
+                    inst.style.display = 'none';
+                }
+                setTimeout(function() {
+                    mask.addEventListener('click', close)
+                }, 6000);
+                setTimeout(function() {
+                    close();
+                }, 10000)
+                break;
+            case 3:
+                firstPage.style.display = 'none';
+                secondPage.style.display = 'none';
+                lastPage.style.display = 'block';
+                break;
+        }
+    }
+
+    GotoPage(2, true)
+
+    _m.loadCss(_m.path + "css/style.css");
+};
+
+(function(ad) {
+    var _m = new mads();
+    var scripts = [_m.path + 'js/hammer.min.js', _m.path + 'js/velocity.min.js', _m.path + 'js/html2canvas.min.js'];
+    var loadCount = scripts.length;
+
+    function done() {
+        loadCount -= 1;
+        if (loadCount == 0) {
+            ad(_m);
+        }
+    }
+
+    for (var i = 0; i < scripts.length; i++) {
+        _m.loadJs(scripts[i], done);
+    }
+})(ad)

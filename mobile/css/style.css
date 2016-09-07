@@ -1,6 +1,277 @@
-#rma-widget, #adc {
+body {
+    padding: 0;
+    margin: 0;
+}
+
+#rma-widget,
+#adc,
+#first,
+#second,
+#overlay {
     width: 320px;
     height: 480px;
     margin: 0;
     padding: 0;
+}
+
+.mask {
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
+    background: #666;
+    overflow: hidden;
+    opacity: 0.7;
+    z-index: 99;
+}
+
+#instruction {
+    position: absolute;
+    /* or absolute */
+    top: 200px;
+    left: 110px;
+    z-index: 101;
+}
+
+#controls {
+    position: absolute;
+    left: 20px;
+    bottom: 120px;
+    z-index: 3;
+}
+
+#controls img {
+    margin-bottom: 5px;
+    display: block;
+}
+
+#overlay {
+    position: absolute;
+    background: url(../img/overlay.png);
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#adc {
+    position: absolute;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#second {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+#last {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+#selfie {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 0;
+}
+
+#kembali {
+    background: #697875;
+    position: absolute;
+    padding: 5px 28px;
+    color: white;
+    bottom: 0;
+    font-weight: normal;
+    left: 15px;
+    border-radius: 25px;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+#pilih {
+    background: #88231b;
+    position: absolute;
+    padding: 5px 45px;
+    color: white;
+    bottom: 0px;
+    right: 15px;
+    border-radius: 25px;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.coverlay {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    bottom: 0;
+}
+
+#containerwork {
+    border: 2px solid #88231b;
+    position: absolute;
+    width: 290px;
+    height: 225px;
+    top: 130px;
+    left: 15px;
+    overflow: hidden;
+}
+
+#workspace {
+    width: 290px;
+    height: 225px;
+    background: #ffffff;
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJod…EiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+    background: -moz-linear-gradient(top, #ffffff 0%, #e0e0e0 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #e0e0e0));
+    background: -webkit-linear-gradient(top, #ffffff 0%, #e0e0e0 100%);
+    background: -o-linear-gradient(top, #ffffff 0%, #e0e0e0 100%);
+    background: -ms-linear-gradient(top, #ffffff 0%, #e0e0e0 100%);
+    background: linear-gradient(to bottom, #ffffff 0%, #e0e0e0 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e0e0e0', GradientType=0);
+}
+
+#btnSelfie {
+    background: #88231b;
+    position: absolute;
+    padding: 5px 70px;
+    color: white;
+    bottom: 15px;
+    max-width: 200px;
+    left: 60px;
+    border-radius: 25px;
+    font-size: 25px;
+}
+
+
+/**
+ * file input fallback
+ */
+
+#file-input {
+    cursor: pointer;
+    outline: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    filter: alpha(opacity=0);
+    /* IE < 9 */
+    opacity: 0;
+}
+
+#chooser {
+    position: absolute;
+    bottom: 20px;
+}
+
+#buttons {
+    position: absolute;
+    bottom: 10px;
+    width: 320px;
+}
+
+
+/**
+ * (optional) define here the style definitions which should be applied on the slider container
+ * e.g. width including further controls like arrows etc.
+ */
+
+.slider {
+    width: 320px;
+    position: relative;
+    margin: 0 auto 40px;
+    padding: 0px;
+    border: 0px;
+    background: none;
+}
+
+.frame {
+    /**
+     * (optional) wrapper width, specifies width of the slider frame.
+     */
+    position: relative;
+    width: 226px;
+    margin: 0 auto;
+    font-size: 0;
+    line-height: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0px;
+    border: 0px;
+    background: none;
+}
+
+.frame li {
+    position: relative;
+    display: inline-block;
+    font-family: 'Source Sans Pro', sans-serif;
+    height: 50px;
+    text-align: center;
+    font-size: 15px;
+    line-height: 30px;
+    background-color: #fff;
+    width: 50px;
+    margin-right: 34px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid gray;
+}
+
+.frame li:last-child {
+    margin-right: 0;
+}
+
+.frame li.selected {
+    border-color: #88231b;
+    border-width: 2px;
+}
+
+.frame li img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 100%;
+    width: auto;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.prev {
+    left: 15px;
+}
+
+.next {
+    right: 15px;
+    transform: rotatey(180deg)
+}
+
+.prev,
+.next {
+    position: absolute;
+    top: 40%;
+    margin-top: -25px;
+    display: block;
+    cursor: pointer;
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+    background: none;
+}
+
+.slides {
+    display: inline-block;
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+    background: none;
 }
