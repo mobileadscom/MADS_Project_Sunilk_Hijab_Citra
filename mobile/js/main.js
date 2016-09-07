@@ -194,7 +194,7 @@ var ad = function(_m) {
 
     var sliderHead = '<div id="chooser"><div class="slider js_slider"> <div class="frame js_frame"> <ul class="slides js_slides"> <li class="js_slide selected"><img class="image1" src="' + _m.path + 'img/1-d.png"></li><li class="js_slide"><img class="image2" src="' + _m.path + 'img/2-d.png"></li><li class="js_slide"><img class="image3" src="' + _m.path + 'img/3-d.png"></li><li class="js_slide"><img class="image4" src="' + _m.path + 'img/4-d.png"></li><li class="js_slide"><img class="image5" src="' + _m.path + 'img/5-d.png"></li><li class="js_slide"><img class="image6" src="' + _m.path + 'img/6-d.png"></li></ul> </div><img class="js_prev prev" src="' + _m.path + 'img/slider_btn.png"> <img class="js_next next" src="' + _m.path + 'img/slider_btn.png"> </div></div><div id="buttons"><div id="kembali">Kembali</div><div id="pilih">Pilih</div></div>';
 
-    _m.contentTag.innerHTML = '<div id="adc"><div id="first"><label id="btnSelfie" for="file-input">Selfie<input type="file" accept="image/*;capture=camera" id="file-input"></label></div><div id="second"><img id="instruction" src="' + _m.path + 'img/gif.gif"><div class="mask"></div><div id="controls"><img class="rotate" src="' + _m.path + 'img/rotate.png"><img class="zoomin" src="' + _m.path + 'img/zoom_plus.png"><img class="zoomout" src="' + _m.path + 'img/zoom_minus.png"></div><div id="containerwork"><div id="workspace"></div></div>' + sliderHead + '</div><div id="last"><img src="' + _m.path + 'img/last.png"></div></div><div id="overlay"></div>';
+    _m.contentTag.innerHTML = '<div id="adc"><div id="first"><label id="btnSelfie" for="file-input">Selfie<input type="file" accept="image/*;capture=camera" id="file-input"></label></div><div id="second"><img id="instruction" src="' + _m.path + 'img/gif.gif"><div class="mask"></div><div id="controls"><img class="rotate" src="' + _m.path + 'img/rotate.png"><img class="zoomin" src="' + _m.path + 'img/zoom_plus.png"><img class="zoomout" src="' + _m.path + 'img/zoom_minus.png"></div><div id="containerwork"><div id="workspace"></div></div>' + sliderHead + '</div><div id="last"><img src="' + _m.path + 'img/last.png"><img id="fb-share" src="'+_m.path+'img/fb-icn.png"><img id="tw-share" src="'+_m.path+'img/tw-icn.png"><div id="coba">Coba Lagi</div><div id="info">Info Hadiah</div></div></div><div id="overlay"></div>';
 
 
     var firstPage = _m.contentTag.querySelector('#first');
@@ -235,13 +235,14 @@ var ad = function(_m) {
     kembali.addEventListener('click', function() {
         GotoPage(1);
     });
-    var lastimg;
+    var lastimg = new Image();
+    lastimg.id = "lastimg";
     pilih.addEventListener('click', function() {
         activ.src = activ.src.replace('-d', '-e');
 
         html2canvas(workspace, {
             onrendered: function(canvas) {
-                lastimg = canvas.toDataURL("image/png");
+                lastimg.src = canvas.toDataURL("image/png");
                 GotoPage(3);
             }
         })
@@ -385,6 +386,9 @@ var ad = function(_m) {
                 firstPage.style.display = 'none';
                 secondPage.style.display = 'none';
                 lastPage.style.display = 'block';
+                if (lastimg) {
+                    lastPage.appendChild(lastimg);
+                }
                 break;
         }
     }

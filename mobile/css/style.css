@@ -51,7 +51,7 @@ body {
     position: absolute;
     background: url(../img/overlay.png);
     z-index: 10;
-    opacity: 0;
+    opacity: 0.2;
     pointer-events: none;
 }
 
@@ -103,6 +103,51 @@ body {
     right: 15px;
     border-radius: 25px;
     font-size: 25px;
+    cursor: pointer;
+}
+
+#lastimg {
+    position: absolute;
+    left: -33px;
+    top: 101px;
+    transform: scale(.8) rotateZ(-7deg);
+    z-index: -1;
+}
+
+#fb-share {
+    position: absolute;
+    right: 99px;
+    top: 166px;
+}
+
+#tw-share {
+    position: absolute;
+    right: 49px;
+    top: 166px;
+}
+
+#coba {
+    background: #697875;
+    position: absolute;
+    padding: 3px 28px;
+    color: white;
+    bottom: 195px;
+    font-weight: normal;
+    border-radius: 25px;
+    font-size: 13px;
+    cursor: pointer;
+    right: 7px;
+}
+
+#info {
+    background: #88231b;
+    position: absolute;
+    padding: 3px 35px;
+    color: white;
+    bottom: 21px;
+    right: 38px;
+    border-radius: 25px;
+    font-size: 15px;
     cursor: pointer;
 }
 
