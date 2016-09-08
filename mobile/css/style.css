@@ -51,7 +51,7 @@ body {
     position: absolute;
     background: url(../img/overlay.png);
     z-index: 10;
-    opacity: 0.2;
+    opacity: 0;
     pointer-events: none;
 }
 

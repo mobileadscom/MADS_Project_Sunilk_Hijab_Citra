@@ -248,6 +248,25 @@ var ad = function(_m) {
         })
     })
 
+    var reset = _m.contentTag.querySelector('#coba');
+    reset.addEventListener('click', function() {
+        GotoPage(1);
+    })
+
+    var info = _m.contentTag.querySelector('#info');
+    info.addEventListener('click', function() {
+        _m.linkOpener('http://www.rumahcantikcitra.co.id/artikel/syarat-dan-ketentuan/');
+    })
+
+    var fbshare = _m.contentTag.querySelector('#fb-share');
+    var twshare = _m.contentTag.querySelector('#tw-share');
+    fbshare.addEventListener('click', function() {
+        alert('Not yet implemented');
+    })
+    twshare,addEventListener('click', function() {
+        alert('Not yet implemented');
+    })
+
     var rotate = _m.contentTag.querySelector('#controls .rotate');
     var zoomin = _m.contentTag.querySelector('#controls .zoomin');
     var zoomout = _m.contentTag.querySelector('#controls .zoomout');
@@ -386,6 +405,7 @@ var ad = function(_m) {
                 firstPage.style.display = 'none';
                 secondPage.style.display = 'none';
                 lastPage.style.display = 'block';
+                lastPage.innerHTML = '';
                 if (lastimg) {
                     lastPage.appendChild(lastimg);
                 }
