@@ -197,7 +197,7 @@ var ad = function (_m) {
 
     var sliderHead = '<div id="chooser"><div class="slider js_slider"> <div class="frame js_frame"> <ul class="slides js_slides"> <li class="js_slide selected"><img class="image1" src="' + _m.path + 'img/1-d.png"></li><li class="js_slide"><img class="image2" src="' + _m.path + 'img/2-d.png"></li><li class="js_slide"><img class="image3" src="' + _m.path + 'img/3-d.png"></li><li class="js_slide"><img class="image4" src="' + _m.path + 'img/4-d.png"></li><li class="js_slide"><img class="image5" src="' + _m.path + 'img/5-d.png"></li><li class="js_slide"><img class="image6" src="' + _m.path + 'img/6-d.png"></li></ul> </div><img class="js_prev prev" src="' + _m.path + 'img/slider_btn.png"> <img class="js_next next" src="' + _m.path + 'img/slider_btn.png"> </div></div><div id="buttons"><div id="kembali">Kembali</div><div id="pilih">Pilih</div></div>';
 
-    _m.contentTag.innerHTML = '<div id="adc"><div id="first"><label id="btnSelfie" for="file-input">Selfie<input type="file" accept="image/*;capture=camera" id="file-input"></label></div><div id="second"><img id="instruction" src="' + _m.path + 'img/gif.gif"><div class="mask"></div><div id="controls"><img class="rotate" src="' + _m.path + 'img/rotate.png"><img class="zoomin" src="' + _m.path + 'img/zoom_plus.png"><img class="zoomout" src="' + _m.path + 'img/zoom_minus.png"></div><div id="containerwork"><div id="workspace"></div></div>' + sliderHead + '</div><div id="last"><div id="lastic"></div><img src="' + _m.path + 'img/last.png"><img id="fb-share" src="' + _m.path + 'img/fb-icn.png"><img id="tw-share" src="' + _m.path + 'img/tw-icn.png"><div id="coba">Coba Lagi</div><div id="info">Info Hadiah</div></div></div><div id="overlay"></div>';
+    _m.contentTag.innerHTML = '<div id="adc"><div id="first"><label id="btnSelfie" for="file-input">Selfie<input type="file" accept="image/*;capture=camera" id="file-input"></label></div><div id="second"><img id="instruction" src="' + _m.path + 'img/gif.gif"><div class="mask"></div><div id="controls"><img class="rotate" src="' + _m.path + 'img/rotate.png"><img class="zoomin" src="' + _m.path + 'img/zoom_plus.png"><img class="zoomout" src="' + _m.path + 'img/zoom_minus.png"></div><div id="containerwork"><div id="workspace"></div></div>' + sliderHead + '</div><div id="last"><div id="lastic"></div><img src="' + _m.path + 'img/last.png"><img id="fb-share" src="' + _m.path + 'img/fb-icn.png"><img id="tw-share" src="' + _m.path + 'img/tw-icn.png"><div id="coba">Coba Lagi</div><div id="info">Info Hadiah</div></div></div><div id="overlay-1"></div>';
 
 
     var firstPage = _m.contentTag.querySelector('#first');
@@ -209,6 +209,12 @@ var ad = function (_m) {
     var lastPage = _m.contentTag.querySelector('#last');
 
     var inputFile = _m.contentTag.querySelector('input');
+
+    var btnSelfie = _m.contentTag.querySelector('#btnSelfie');
+    btnSelfie.addEventListener('click', function () {
+        _m.tracker('E', 'selfie_click');
+    })
+
 
     inputFile.addEventListener('change', function (e) {
         var files = inputFile.files;
@@ -228,7 +234,7 @@ var ad = function (_m) {
                 addControlTo(dimg);
             }
             fr.readAsDataURL(files[0])
-
+            _m.tracker('E', 'selfie_added');
             GotoPage(2)
         }
     });
@@ -239,28 +245,47 @@ var ad = function (_m) {
     var kembali = _m.contentTag.querySelector('#kembali');
     var pilih = _m.contentTag.querySelector('#pilih');
     kembali.addEventListener('click', function () {
+        _m.tracker('E', 'go_back');
         GotoPage(1);
     });
     var lastimg = new Image();
     lastimg.id = "lastimg";
     pilih.addEventListener('click', function () {
+
+        activ.onload = function () {
+            // lastimg = workspace.cloneNode(true);
+            // lastimg.id = "lastimg";
+
+            // GotoPage(3);
+            setTimeout(function () {
+                html2canvas(workspace, {
+                    onrendered: function (canvas) {
+                        _m.tracker('E', 'choose');
+
+                        lastimg.onload = function () {
+                            GotoPage(3);
+                        }
+                        lastimg.src = canvas.toDataURL("image/png");
+                    }
+                })
+            }, 500);
+
+        }
+
         activ.src = activ.src.replace('-d', '-e');
 
-        html2canvas(workspace, {
-            onrendered: function (canvas) {
-                lastimg.src = canvas.toDataURL("image/png");
-                GotoPage(3);
-            }
-        })
+
     })
 
     var reset = _m.contentTag.querySelector('#coba');
     reset.addEventListener('click', function () {
+        _m.tracker('E', 'reset');
         GotoPage(1);
     })
 
     var info = _m.contentTag.querySelector('#info');
     info.addEventListener('click', function () {
+        _m.tracker('CTR', 'landing_page');
         _m.linkOpener('http://www.rumahcantikcitra.co.id/artikel/syarat-dan-ketentuan/');
     })
 
@@ -268,19 +293,99 @@ var ad = function (_m) {
 
     var fbshare = _m.contentTag.querySelector('#fb-share');
     var twshare = _m.contentTag.querySelector('#tw-share');
+
+    var masklast = document.createElement('div')
+    masklast.className = 'mask'
+    masklast.style.display = 'none'
+    masklast.style.textAlign = 'center'
+    masklast.style.lineHeight = '380px'
+    masklast.style.color = 'white'
+    masklast.innerHTML = 'Loading...'
+    lastPage.appendChild(masklast)
+
     fbshare.addEventListener('click', function () {
-        alert('Not yet implemented');
+        _m.tracker('E', 'fb_share');
+        // _m.linkOpener('https://www.facebook.com/Rumah-Cantik-Citra-79003217653/');
+        uploadStage1('fb')
     })
     twshare.addEventListener('click', function () {
-        alert('Not yet implemented');
+        _m.tracker('E', 'tw_share');
+        uploadStage1('twit')
+        // _m.linkOpener('https://twitter.com/CantikCitra');
     })
 
-    var uploadStage = function () {
-        var dnow =  Math.floor(Date.now() / 1000);
+    var dataURItoBlob = function (dataURI) {
+        // convert base64/URLEncoded data component to raw binary data held in a string
+        var byteString;
+        if (dataURI.split(',')[0].indexOf('base64') >= 0)
+            byteString = atob(dataURI.split(',')[1]);
+        else
+            byteString = unescape(dataURI.split(',')[1]);
 
+        // separate out the mime component
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+        // write the bytes of the string to a typed array
+        var ia = new Uint8Array(byteString.length);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+
+        return new Blob([ia], { type: mimeString });
+    }
+
+    var particle = _m.path;
+    var protocol = particle.split('/') + '//';
+
+    var uploadStage2 = function (dnow, social) {
+
+        var domain = "https://rmarepo.richmediaads.com/"
+        // <meta property="og:url" content="http://www.rumahcantikcitra.co.id/artikel/syarat-dan-ketentuan/">
+        var html = '<!DOCTYPE html><html lang="en"><head> <meta charset="UTF-8"> <title>${title}</title> <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"> <meta http-equiv="refresh" content="3;url=http://www.rumahcantikcitra.co.id/artikel/syarat-dan-ketentuan/" /> <meta property="og:type" content="image"> <meta property="og:title" content="${title}"> <meta property="og:description" content="${description}"> <meta property="og:image" content="${image}"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:url" content="http://www.rumahcantikcitra.co.id/artikel/syarat-dan-ketentuan/"> <meta name="twitter:site" content="@CantikCitra"> <meta name="twitter:title" content="${title}"> <meta name="twitter:description" content="${description}"> <meta name="twitter:creator" content="@CantikCitra"> <meta name="twitter:image" content="${image}"> <meta name="twitter:domain" content="www.rumahcantikcitra.co.id"> <meta name="description" content="${description}"> <meta name="DC.title" content="${title}"> <!-- Latest compiled and minified CSS --> <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> <style> /* Space out content a bit */ body { padding-top: 20px; padding-bottom: 20px; } /* Everything but the jumbotron gets side spacing for mobile first views */ .header, .marketing, .footer { padding-right: 15px; padding-left: 15px; } /* Custom page header */ .header { padding-bottom: 20px; border-bottom: 1px solid #e5e5e5; } /* Make the masthead heading the same height as the navigation */ .header h3 { margin-top: 0; margin-bottom: 0; line-height: 40px; } /* Custom page footer */ .footer { padding-top: 19px; color: #777; border-top: 1px solid #e5e5e5; } /* Customize container */ @media (min-width: 768px) { .container { max-width: 730px; } } .container-narrow>hr { margin: 30px 0; } /* Main marketing message and sign up button */ .jumbotron { text-align: center; border-bottom: 1px solid #e5e5e5; } .jumbotron .btn { padding: 14px 24px; font-size: 21px; } /* Supporting marketing content */ .marketing { margin: 40px 0; } .marketing p+h4 { margin-top: 28px; } /* Responsive: Portrait tablets and up */ @media screen and (min-width: 768px) { /* Remove the padding we set earlier */ .header, .marketing, .footer { padding-right: 0; padding-left: 0; } /* Space out the masthead */ .header { margin-bottom: 30px; } /* Remove the bottom border on the jumbotron for visual effect */ .jumbotron { border-bottom: 0; } } </style></head><body> <div class="container"> <div class="jumbotron"> <div class="row marketing"> <img src="${image}" alt="${title}"> <h1 class="title">${title}</h1> <p class="description">${description}</p> <p><strong>You\'ll be redirected to our site. Please wait for 5 seconds.</strong></p> </div> </div> </div> <!-- Latest compiled and minified JavaScript --> <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script></body></html>'
+
+        html = html.replace(/\$\{title\}/g, 'Citra Wakame');
+        html = html.replace(/\$\{description\}/g, 'Solusi bagi kamu yang berhijab, untuk tetap bisa pake lotion tanpa rasa lengket');
+        html = html.replace(/\$\{image\}/g, domain + "2901/custom/sunsilk_hijab_citra/uploads/" + dnow + '/image.png');
+
+        var htmlBLOB = new Blob([html], { type: 'text/html' });
 
         var data = new FormData();
-        data.append("pic[]", lastimg.replace(/^data:image\/(png|jpg);base64,/, ""));
+        data.append("pic[]", htmlBLOB);
+        data.append("path", "2901/custom/sunsilk_hijab_citra/uploads/" + dnow);
+        data.append("name", "index.html");
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener('readystatechange', function () {
+            if (this.readyState === 4) {
+                var msg = encodeURIComponent('Solusi bagi kamu yang berhijab, untuk tetap bisa pake lotion tanpa rasa lengke')
+                var url = encodeURIComponent(domain + '2901/custom/sunsilk_hijab_citra/uploads/' + dnow + '/index.html')
+                if (social == 'fb') {
+                  _m.linkOpener('https://www.facebook.com/sharer/sharer.php?u='+url)
+                } else if (social == 'twit') {
+                  var referrer = encodeURIComponent('http://www.rumahcantikcitra.co.id/artikel/syarat-dan-ketentuan/')
+                  var text = encodeURIComponent('Yuk rajin pake Citra Wakame agar kulit cerah tanpa rasa lengket');
+                  _m.linkOpener('https://twitter.com/intent/tweet?text='+text+'&original_referer='+referrer+'&url='+url+'&tw_p=tweetbutton&via=CantikCitra')
+                }
+                masklast.style.display = 'none'
+                console.log('stage2', this.responseText);
+            }
+        });
+        xhr.open("POST", protocol + "www.mobileads.com/upload-image-twtbk");
+        xhr.setRequestHeader("cache-control", "no-cache");
+        xhr.send(data)
+
+    }
+
+
+
+    var uploadStage1 = function (social) {
+
+      masklast.style.display = 'block'
+
+
+        var dnow = Math.floor(Date.now() / 1000);
+
+        var data = new FormData();
+        data.append("pic[]", dataURItoBlob(lastimg.src));
         data.append("path", "2901/custom/sunsilk_hijab_citra/uploads/" + dnow);
         data.append("name", "image.png");
 
@@ -288,11 +393,12 @@ var ad = function (_m) {
 
         xhr.addEventListener("readystatechange", function () {
             if (this.readyState === 4) {
-                console.log(this.responseText);
+                console.log('stage1', this.responseText);
+                uploadStage2(dnow, social);
             }
         });
 
-        xhr.open("POST", "http://test.mobileads.com/upload-image-twtbk");
+        xhr.open("POST", protocol + "www.mobileads.com/upload-image-twtbk");
         xhr.setRequestHeader("cache-control", "no-cache");
 
         xhr.send(data);
